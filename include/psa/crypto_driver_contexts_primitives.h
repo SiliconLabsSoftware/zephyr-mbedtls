@@ -42,6 +42,10 @@
 #endif
 #endif
 
+#if defined(PSA_CRYPTO_DRIVER_SILABS_VSE)
+#include "sli_cryptoacc_transparent_types.h"
+#endif
+
 #if defined(MBEDTLS_TEST_LIBTESTDRIVER1)
 #include <libtestdriver1/include/psa/crypto.h>
 #endif
@@ -109,6 +113,9 @@ typedef union {
 #if defined(PSA_CRYPTO_DRIVER_SILABS_HSE)
     sli_se_transparent_hash_operation_t sli_se_transparent_ctx;
 #endif /* PSA_CRYPTO_DRIVER_SILABS_HSE */
+#if defined(PSA_CRYPTO_DRIVER_SILABS_VSE)
+    sli_cryptoacc_transparent_hash_operation_t sli_cryptoacc_transparent_ctx;
+#endif /* PSA_CRYPTO_DRIVER_SILABS_VSE */
 } psa_driver_hash_context_t;
 
 typedef union {
@@ -127,6 +134,9 @@ typedef union {
     sli_se_opaque_cipher_operation_t sli_se_opaque_ctx;
 #endif /* PSA_CRYPTO_DRIVER_SILABS_HSE  && SLI_PSA_DRIVER_FEATURE_OPAQUE_KEYS */
 #endif /* PSA_CRYPTO_DRIVER_SILABS_HSE */
+#if defined(PSA_CRYPTO_DRIVER_SILABS_VSE)
+    sli_cryptoacc_transparent_cipher_operation_t sli_cryptoacc_transparent_ctx;
+#endif /* PSA_CRYPTO_DRIVER_SILABS_VSE */
 } psa_driver_cipher_context_t;
 
 #endif /* PSA_CRYPTO_DRIVER_CONTEXTS_PRIMITIVES_H */
