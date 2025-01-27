@@ -88,6 +88,17 @@
 #endif /* SLI_PSA_DRIVER_FEATURE_OPAQUE_KEYS */
 #endif /* PSA_CRYPTO_DRIVER_SILABS_VSE */
 
+#if defined(PSA_CRYPTO_DRIVER_SILABS_SI91X)
+#ifndef PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT
+#define PSA_CRYPTO_ACCELERATOR_DRIVER_PRESENT
+#endif
+#include "sli_psa_driver_features.h"
+#include "sli_si91x_crypto_driver_functions.h"
+#if defined(SLI_PSA_DRIVER_FEATURE_WRAPPED_KEYS)
+#include "sl_si91x_psa_wrap.h"
+#endif /* Secure key storage driver **/
+#endif /* PSA_CRYPTO_DRIVER_SILABS_SI91X */
+
 /* END-driver headers */
 
 /* Auto-generated values depending on which drivers are registered.
@@ -114,6 +125,9 @@ enum {
 #if defined(PSA_CRYPTO_DRIVER_SILABS_VSE)
     PSA_CRYPTO_SILABS_VSE_TRANSPARENT_DRIVER_ID,
 #endif /* PSA_CRYPTO_DRIVER_SILABS_VSE */
+#if defined(PSA_CRYPTO_DRIVER_SILABS_SI91X)
+    PSA_CRYPTO_SILABS_SI91X_DRIVER_ID,
+#endif /* PSA_CRYPTO_DRIVER_SILABS_SI91X */
 };
 
 /* END-driver id */
@@ -224,6 +238,17 @@ psa_status_t psa_driver_wrapper_get_key_buffer_size(
             return ( PSA_SUCCESS );
 #endif
 
+#if defined(PSA_CRYPTO_CRIVER_SILABS_SI91X) && defined(SLI_PSA_DRIVER_FEATURE_WRAPPED_KEYS)
+        case PSA_KEY_VOLATILE_PERSISTENT_WRAPPED:
+          buffer_size = PSA_EXPORT_KEY_OUTPUT_SIZE( key_type, key_bits );
+          if( buffer_size == 0 ||
+              ( PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type) && buffer_size == 1 ) )
+              return( PSA_ERROR_NOT_SUPPORTED );
+          *key_buffer_size = buffer_size;
+          return( PSA_SUCCESS );
+          break;
+#endif
+
         default:
             (void)key_type;
             (void)key_bits;
@@ -320,6 +345,18 @@ psa_status_t psa_driver_wrapper_export_public_key(
             if( status != PSA_ERROR_NOT_SUPPORTED )
                 return( status );
 #endif // PSA_CRYPTO_DRIVER_SILABS_VSE
+
+#if defined(PSA_CRYPTO_DRIVER_SILABS_SI91X) && defined(SLI_PSA_DRIVER_FEATURE_ECDH) 
+            status = sli_si91x_psa_export_public_key_ecdh( attributes,
+                                                           key_buffer,
+                                                           key_buffer_size,
+                                                           data,
+                                                           data_size,
+                                                           data_length );
+            /* Declared with fallback == true */
+            if( status != PSA_ERROR_NOT_SUPPORTED )
+                return( status );
+#endif // PSA_CRYPTO_DRIVER_SILABS_SI91X
 
 #if (defined(MBEDTLS_PSA_P256M_DRIVER_ENABLED) )
             status = p256_transparent_export_public_key
