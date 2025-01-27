@@ -34,6 +34,15 @@
 #include "cc3xx_crypto_primitives_private.h"
 #endif
 
+#if defined(PSA_CRYPTO_DRIVER_SILABS_HSE)
+#include "sli_psa_driver_features.h"
+#include "sli_se_transparent_types.h"
+
+#if defined(SLI_PSA_DRIVER_FEATURE_OPAQUE_KEYS)
+#include "sli_se_opaque_types.h"
+#endif
+#endif
+
 #if defined(MBEDTLS_TEST_LIBTESTDRIVER1)
 #include <libtestdriver1/include/psa/crypto.h>
 #endif
@@ -125,6 +134,12 @@ typedef union {
 #if defined(PSA_CRYPTO_DRIVER_CC3XX)
     cc3xx_mac_operation_t cc3xx_driver_ctx;
 #endif
+#if defined(PSA_CRYPTO_DRIVER_SILABS_HSE)
+    sli_se_transparent_mac_operation_t sli_se_transparent_ctx;
+#if defined(PSA_CRYPTO_DRIVER_SILABS_HSE) && defined(SLI_PSA_DRIVER_FEATURE_OPAQUE_KEYS)
+    sli_se_opaque_mac_operation_t sli_se_opaque_ctx;
+#endif /* PSA_CRYPTO_DRIVER_SILABS_HSE  && SLI_PSA_DRIVER_FEATURE_OPAQUE_KEYS */
+#endif /* PSA_CRYPTO_DRIVER_SILABS_HSE */
 } psa_driver_mac_context_t;
 
 typedef union {
@@ -136,6 +151,12 @@ typedef union {
 #if defined(PSA_CRYPTO_DRIVER_CC3XX)
     cc3xx_aead_operation_t cc3xx_driver_ctx;
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
+#if defined(PSA_CRYPTO_DRIVER_SILABS_HSE)
+    sli_se_transparent_aead_operation_t sli_se_transparent_ctx;
+#if defined(PSA_CRYPTO_DRIVER_SILABS_HSE) && defined(SLI_PSA_DRIVER_FEATURE_OPAQUE_KEYS)
+    sli_se_opaque_aead_operation_t sli_se_opaque_ctx;
+#endif /* PSA_CRYPTO_DRIVER_SILABS_HSE  && SLI_PSA_DRIVER_FEATURE_OPAQUE_KEYS */
+#endif /* PSA_CRYPTO_DRIVER_SILABS_HSE */
 } psa_driver_aead_context_t;
 
 typedef union {
